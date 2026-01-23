@@ -1,56 +1,54 @@
 #include <bits/stdc++.h>
 using namespace std;
-using namespace std::chrono;
 
-int operations=0;
-void complexRec(int n) {
-   operations++;
-   
-   if (n <= 2) {   // 1 OPERATION
-       
-       return;
-   }
+int Depth=0;
+int maxDepth = 0;
 
+void complexRec(int n)
+{
+    Depth++;
+    maxDepth = max(maxDepth, Depth);
 
-   int p = n;
-   operations++;
-   while (p > 0) {   // O(n log n)
-      operations++;
-       vector<int> temp(n);
-        operations++;
-       for (int i = 0; i < n; i++) {
-           operations++;
-           temp[i] = i ^ p;
-           operations++;
-       }
-       p >>= 1;
-       operations++;
-   }
+    if (n <= 2)
+    {
+        Depth--;
+        return;
+    }
 
+    int p = n;
+    while (p > 0)
+    {
+        vector<int> temp(n);
+        for (int i = 0; i < n; i++)
+        {
+            temp[i] = i ^ p;
+        }
+        p >>= 1;
+    }
 
-   vector<int> small(n);
-     operations++;
-   for (int i = 0; i < n; i++) {
-      operations++;
-       small[i] = i * i;
-         operations++;
-   }
+    vector<int> small(n);
+    for (int i = 0; i < n; i++)
+    {
+        small[i] = i * i;
+    }
 
+    reverse(small.begin(), small.end()); 
 
-   if (n % 3 == 0) {  //O(n)
-       reverse(small.begin(), small.end());
-       operations+=n;
-   } else {
-       reverse(small.begin(), small.end());
-        operations+=n;
-   }
+    complexRec(n / 2);
+    complexRec(n / 2);
+    complexRec(n / 2);
 
-   //O(3T(N/2))
-   complexRec(n / 2);  
-   complexRec(n / 2);
-   complexRec(n / 2);
-   
+    Depth--;
 }
-//recurrence relation T(N)=3T(N/2)+O(N log N)
-//CASE 1 OF MASTER THEOREM T.C. O(N ^ log_2 3)
 
+int main()
+{
+    int n;
+    cin>>n;
+    complexRec(n);
+    cout << "Max recursion depth:"<<maxDepth<<endl;
+    return 0;
+}
+//CASE 1 OF MASTER THEOREM
+// Recurrence relation: t(N) = 3T(N/2) + O(N logN)
+// Time Complexity: O(N^log_2 3)
